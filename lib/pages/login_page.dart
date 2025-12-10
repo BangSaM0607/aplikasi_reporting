@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                final res = await auth.login(email.text, password.text);
+                await auth.login(email.text, password.text);
                 if (mounted) {
                   Navigator.pushReplacement(
                     context,
