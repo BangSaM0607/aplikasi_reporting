@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/report_model.dart';
 import '../controllers/report_controller.dart';
+import '../pages/edit_report_page.dart'; // added import
 
 class ReportDetailPage extends StatelessWidget {
   final ReportModel report;
@@ -15,6 +16,21 @@ class ReportDetailPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(report.title),
         elevation: 0,
+        actions: [ // added edit button
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () async {
+              final updated = await Navigator.push<bool>(
+                context,
+                MaterialPageRoute(builder: (_) => EditReportPage(report: report)),
+              );
+              if (updated == true) {
+                controller.fetchReports();
+                // optional: pop back to previous list if needed
+              }
+            },
+          ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
