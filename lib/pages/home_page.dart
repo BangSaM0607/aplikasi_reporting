@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../controllers/report_controller.dart';
 import 'add_report_page.dart';
 import 'report_detail_page.dart';
+import 'login_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -23,8 +24,15 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-              await Supabase.instance.client.auth.signOut();
-              Get.offAllNamed('/login');
+              try {
+                await Supabase.instance.client.auth.signOut();
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const LoginPage()),
+                  (route) => false,
+                );
+              } catch (e) {
+                print('Error logout: $e');
+              }
             },
           ),
         ],
