@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../controllers/report_controller.dart';
 import 'add_report_page.dart';
 import 'report_detail_page.dart';
-import 'login_page.dart';
+import '../../login_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
