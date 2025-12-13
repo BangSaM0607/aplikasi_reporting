@@ -1,5 +1,4 @@
-import 'dart:io';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:typed_data';
 import '../supabase_config.dart';
 import '../models/report_model.dart';
 
@@ -7,27 +6,21 @@ class ReportService {
   final table = 'reports';
   final bucket = 'report_images';
 
-  Future<List<ReportModel>> getReports() async {
-    final data = await supabase
-        .from(table)
-        .select()
-        .order('created_at', ascending: false);
+  /// Upload image (WEB + MOBILE AMAN)
+  Future<String> uploadImageBytes(Uint8List bytes) async {
+    try {
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-    return data.map<ReportModel>((e) => ReportModel.fromJson(e)).toList();
-  }
+      await supabase.storage.from(bucket).uploadBinary(
+        fileName,
+        bytes,
+      );
 
-  Future<String> uploadImage(File file) async {
-    final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-
-    await supabase.storage
-        .from(bucket)
-        .upload(
-          fileName,
-          file,
-          fileOptions: FileOptions(cacheControl: '3600', upsert: false),
-        );
-
-    return supabase.storage.from(bucket).getPublicUrl(fileName);
+      return supabase.storage.from(bucket).getPublicUrl(fileName);
+    } catch (e) {
+      print('Error uploading image: $e');
+      throw Exception('Gagal upload gambar');
+    }
   }
 
   Future<void> addReport({
@@ -35,14 +28,41 @@ class ReportService {
     required String description,
     required String imageUrl,
   }) async {
-    await supabase.from(table).insert({
-      'title': title,
-      'description': description,
-      'image_url': imageUrl,
-    });
+    try {
+      await supabase.from(table).insert({
+        'title': title,
+        'description': description,
+        'image_url': imageUrl,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      print('Error adding report: $e');
+      throw Exception('Gagal menambah laporan');
+    }
+  }
+
+  Future<List<ReportModel>> getReports() async {
+    try {
+      final response = await supabase
+          .from(table)
+          .select()
+          .order('created_at', ascending: false);
+
+      return (response as List)
+          .map((data) => ReportModel.fromJson(data))
+          .toList();
+    } catch (e) {
+      print('Error fetching reports: $e');
+      throw Exception('Gagal mengambil laporan');
+    }
   }
 
   Future<void> deleteReport(String id) async {
-    await supabase.from(table).delete().eq('id', id);
+    try {
+      await supabase.from(table).delete().eq('id', id);
+    } catch (e) {
+      print('Error deleting report: $e');
+      throw Exception('Gagal menghapus laporan');
+    }
   }
 }

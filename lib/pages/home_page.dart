@@ -10,7 +10,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ReportController());
-    controller.fetchReports();
 
     return Scaffold(
       appBar: AppBar(
