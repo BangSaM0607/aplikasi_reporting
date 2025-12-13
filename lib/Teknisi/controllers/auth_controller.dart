@@ -1,4 +1,4 @@
-import '../supabase_config.dart';
+import '../../supabase_config.dart';
 
 class AuthController {
   Future<String?> login(String email, String password) async {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/report_model.dart';
 import '../controllers/report_controller.dart';
-import '../pages/edit_report_page.dart'; // added import
+import 'edit_report_page.dart'; // added import
 
 class ReportDetailPage extends StatelessWidget {
   final ReportModel report;

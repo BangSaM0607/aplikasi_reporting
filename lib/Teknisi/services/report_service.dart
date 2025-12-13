@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import '../supabase_config.dart';
+import '../../supabase_config.dart';
 import '../models/report_model.dart';
 
 class ReportService {
