@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../controllers/report_controller.dart';
 import 'add_report_page.dart';
 import 'report_detail_page.dart';
@@ -18,6 +19,13 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: controller.fetchReports,
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await Supabase.instance.client.auth.signOut();
+              Get.offAllNamed('/login');
+            },
           ),
         ],
       ),
