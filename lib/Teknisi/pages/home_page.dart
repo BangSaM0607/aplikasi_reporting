@@ -74,7 +74,10 @@ class HomePage extends StatelessWidget {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   child: Row(
                     children: [
                       Expanded(
@@ -83,26 +86,45 @@ class HomePage extends StatelessWidget {
                           decoration: InputDecoration(
                             prefixIcon: const Icon(Icons.search),
                             hintText: 'Cari judul atau deskripsi...',
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                             isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 12,
+                            ),
                           ),
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Obx(() => DropdownButton<String>(
-                            value: sortBy.value,
-                            underline: const SizedBox.shrink(),
-                            items: const [
-                              DropdownMenuItem(value: 'Terbaru', child: Text('Terbaru')),
-                              DropdownMenuItem(value: 'Terlama', child: Text('Terlama')),
-                              DropdownMenuItem(value: 'Status A-Z', child: Text('Status A-Z')),
-                              DropdownMenuItem(value: 'Status Z-A', child: Text('Status Z-A')),
-                            ],
-                            onChanged: (v) {
-                              if (v != null) sortBy.value = v;
-                            },
-                          )),
+                      Obx(
+                        () => DropdownButton<String>(
+                          value: sortBy.value,
+                          underline: const SizedBox.shrink(),
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'Terbaru',
+                              child: Text('Terbaru'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Terlama',
+                              child: Text('Terlama'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Status A-Z',
+                              child: Text('Status A-Z'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Status Z-A',
+                              child: Text('Status Z-A'),
+                            ),
+                          ],
+                          onChanged: (v) {
+                            if (v != null) sortBy.value = v;
+                          },
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -122,14 +144,22 @@ class HomePage extends StatelessWidget {
                       switch (sortBy.value) {
                         case 'Terbaru':
                           if (da != null && db != null) return db.compareTo(da);
-                          return (b.createdAt ?? '').compareTo(a.createdAt ?? '');
+                          return (b.createdAt ?? '').compareTo(
+                            a.createdAt ?? '',
+                          );
                         case 'Terlama':
                           if (da != null && db != null) return da.compareTo(db);
-                          return (a.createdAt ?? '').compareTo(b.createdAt ?? '');
+                          return (a.createdAt ?? '').compareTo(
+                            b.createdAt ?? '',
+                          );
                         case 'Status A-Z':
-                          return (a.status ?? '').toLowerCase().compareTo((b.status ?? '').toLowerCase());
+                          return (a.status ?? '').toLowerCase().compareTo(
+                            (b.status ?? '').toLowerCase(),
+                          );
                         case 'Status Z-A':
-                          return (b.status ?? '').toLowerCase().compareTo((a.status ?? '').toLowerCase());
+                          return (b.status ?? '').toLowerCase().compareTo(
+                            (a.status ?? '').toLowerCase(),
+                          );
                         default:
                           return 0;
                       }
@@ -143,22 +173,41 @@ class HomePage extends StatelessWidget {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.inbox, size: 64, color: Colors.grey.shade400),
+                                Icon(
+                                  Icons.inbox,
+                                  size: 64,
+                                  color: Colors.grey.shade400,
+                                ),
                                 const SizedBox(height: 12),
                                 Text(
                                   'Belum ada laporan',
-                                  style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                    fontSize: 16,
+                                  ),
                                 ),
                                 const SizedBox(height: 12),
-                                ElevatedButton.icon(
+                                // Keep a small outlined action for accessibility; main action moved to FAB
+                                OutlinedButton.icon(
                                   onPressed: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (_) => const AddReportPage()),
+                                      MaterialPageRoute(
+                                        builder: (_) => const AddReportPage(),
+                                      ),
                                     );
                                   },
                                   icon: const Icon(Icons.add),
-                                  label: const Text('Buat Laporan Baru'),
+                                  label: const Text('Buat Laporan'),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  'Atau tekan tombol + di pojok kanan bawah untuk membuat laporan baru',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 12,
+                                  ),
                                 ),
                               ],
                             ),
@@ -177,13 +226,17 @@ class HomePage extends StatelessWidget {
                           onTap: () async {
                             await Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => ReportDetailPage(report: r)),
+                              MaterialPageRoute(
+                                builder: (_) => ReportDetailPage(report: r),
+                              ),
                             );
                             controller.fetchReports();
                           },
                           child: Card(
                             elevation: 2,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             child: Padding(
                               padding: const EdgeInsets.all(12),
                               child: Row(
@@ -206,7 +259,8 @@ class HomePage extends StatelessWidget {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
@@ -221,17 +275,27 @@ class HomePage extends StatelessWidget {
                                                 ),
                                               ),
                                             ),
-                                            if (r.status != null && r.status!.isNotEmpty)
+                                            if (r.status != null &&
+                                                r.status!.isNotEmpty)
                                               Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4,
+                                                    ),
                                                 decoration: BoxDecoration(
-                                                  color: _statusColor(r.status).withOpacity(0.12),
-                                                  borderRadius: BorderRadius.circular(20),
+                                                  color: _statusColor(
+                                                    r.status,
+                                                  ).withOpacity(0.12),
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
                                                 ),
                                                 child: Text(
                                                   r.status!,
                                                   style: TextStyle(
-                                                    color: _statusColor(r.status),
+                                                    color: _statusColor(
+                                                      r.status,
+                                                    ),
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 12,
                                                   ),
@@ -261,7 +325,10 @@ class HomePage extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(width: 8),
-                                  Icon(Icons.chevron_right, color: Colors.grey.shade400),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    color: Colors.grey.shade400,
+                                  ),
                                 ],
                               ),
                             ),
@@ -275,6 +342,16 @@ class HomePage extends StatelessWidget {
             ),
           );
         }),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AddReportPage()),
+          );
+        },
+        label: const Text('Buat Laporan Baru'),
+        icon: const Icon(Icons.add),
       ),
     );
   }
