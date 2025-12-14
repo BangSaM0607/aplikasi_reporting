@@ -1,28 +1,16 @@
-import '../../supabase_config.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthController {
-  Future<String?> login(String email, String password) async {
-    try {
-      final res = await supabase.auth.signInWithPassword(
-        email: email,
-        password: password,
-      );
-      return res.session?.accessToken;
-    } catch (e) {
-      return e.toString();
-    }
+  final _client = Supabase.instance.client;
+
+  Future<void> login(String email, String password) async {
+    final res = await _client.auth.signInWithPassword(email: email, password: password);
+    // jika tidak throw error, login sukses
+    print('Login sukses: ${res.user?.id}');
   }
 
-  Future<String?> register(String email, String password) async {
-    try {
-      final res = await supabase.auth.signUp(email: email, password: password);
-      return res.user?.id;
-    } catch (e) {
-      return e.toString();
-    }
-  }
-
-  void logout() {
-    supabase.auth.signOut();
+  Future<void> register(String email, String password) async {
+    final res = await _client.auth.signUp(email: email, password: password);
+    print('Register sukses: ${res.user?.id}');
   }
 }

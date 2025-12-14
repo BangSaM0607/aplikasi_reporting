@@ -126,57 +126,38 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: _loading
                               ? null
                               : () async {
-                                  if (email.text.trim().isEmpty || password.text.isEmpty) {
-                                    _showError('Email dan password wajib');
-                                    return;
-                                  }
-                                  setState(() => _loading = true);
-                                  try {
-                                    final result = await auth.login(email.text.trim(), password.text);
-
-                                    // Jika AuthController.login mengembalikan boolean sukses
-                                    if (result == true) {
-                                      if (mounted) {
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(builder: (_) => const HomePage()),
-                                        );
+                                      if (email.text.trim().isEmpty || password.text.isEmpty) {
+                                        _showError('Email dan password wajib');
+                                        return;
                                       }
-                                      return;
-                                    }
-
-                                    // Jika mengembalikan objek session/user treat as success
-                                    final isSessionLike = result != null &&
-                                        (result.toString().toLowerCase().contains('access') ||
-                                            result.toString().toLowerCase().contains('user'));
-                                    if (isSessionLike) {
-                                      if (mounted) {
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(builder: (_) => const HomePage()),
-                                        );
+                                      setState(() => _loading = true);
+                                      try {
+                                        await auth.login(email.text.trim(), password.text);
+                                        // jika tidak throw error, anggap berhasil
+                                        if (mounted) {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(builder: (_) => const HomePage()),
+                                          );
+                                        }
+                                      } on AuthException catch (e) {
+                                        // Supabase error
+                                        _showError('Email atau password salah');
+                                      } catch (e) {
+                                        final msg = e.toString().toLowerCase();
+                                        if (msg.contains('invalid') ||
+                                            msg.contains('password') ||
+                                            msg.contains('unauthorized') ||
+                                            msg.contains('invalid_credentials') ||
+                                            msg.contains('user not found')) {
+                                          _showError('Email atau password salah');
+                                        } else {
+                                          _showError('Gagal login: ${e.toString()}');
+                                        }
+                                      } finally {
+                                        if (mounted) setState(() => _loading = false);
                                       }
-                                      return;
-                                    }
-
-                                    // Jika result false / null => tampilkan notifikasi salah
-                                    _showError('Email atau password salah');
-                                  } catch (e) {
-                                    final msg = e.toString().toLowerCase();
-                                    if (msg.contains('invalid') ||
-                                        msg.contains('password') ||
-                                        msg.contains('unauthorized') ||
-                                        msg.contains('invalid login') ||
-                                        msg.contains('invalid_credentials') ||
-                                        msg.contains('user not found')) {
-                                      _showError('Email atau password salah');
-                                    } else {
-                                      _showError('Gagal login: ${e.toString()}');
-                                    }
-                                  } finally {
-                                    if (mounted) setState(() => _loading = false);
-                                  }
-                                },
+                                    },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue.shade800,
                             padding: const EdgeInsets.symmetric(vertical: 14),
