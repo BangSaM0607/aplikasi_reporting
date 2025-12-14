@@ -21,7 +21,6 @@ class _EditReportPageState extends State<EditReportPage> {
   bool _loading = false;
 
   Uint8List? _newImageBytes;
-  String? _newImagePreviewPath; // not required but helps for web/mobile preview
 
   final _picker = ImagePicker();
   final _reportService = ReportService();
@@ -46,7 +45,6 @@ class _EditReportPageState extends State<EditReportPage> {
     final bytes = await picked.readAsBytes();
     setState(() {
       _newImageBytes = bytes;
-      _newImagePreviewPath = picked.path;
     });
   }
 
@@ -127,10 +125,10 @@ class _EditReportPageState extends State<EditReportPage> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _loading ? null : _save,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                 child: _loading
                     ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                     : const Text('Simpan Perubahan'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
               ),
             ],
           ),

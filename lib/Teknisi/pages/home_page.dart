@@ -132,26 +132,22 @@ class HomePage extends StatelessWidget {
                   child: Obx(() {
                     final q = search.value.toLowerCase();
                     final list = controller.reports.where((r) {
-                      final t = (r.title ?? '').toLowerCase();
-                      final d = (r.description ?? '').toLowerCase();
+                      final t = r.title.toLowerCase();
+                      final d = r.description.toLowerCase();
                       return q.isEmpty || t.contains(q) || d.contains(q);
                     }).toList();
 
                     list.sort((a, b) {
                       // parse createdAt safely; fallback to string compare
-                      DateTime? da = DateTime.tryParse(a.createdAt ?? '');
-                      DateTime? db = DateTime.tryParse(b.createdAt ?? '');
+                      DateTime? da = DateTime.tryParse(a.createdAt);
+                      DateTime? db = DateTime.tryParse(b.createdAt);
                       switch (sortBy.value) {
                         case 'Terbaru':
                           if (da != null && db != null) return db.compareTo(da);
-                          return (b.createdAt ?? '').compareTo(
-                            a.createdAt ?? '',
-                          );
+                          return b.createdAt.compareTo(a.createdAt);
                         case 'Terlama':
                           if (da != null && db != null) return da.compareTo(db);
-                          return (a.createdAt ?? '').compareTo(
-                            b.createdAt ?? '',
-                          );
+                          return a.createdAt.compareTo(b.createdAt);
                         case 'Status A-Z':
                           return (a.status ?? '').toLowerCase().compareTo(
                             (b.status ?? '').toLowerCase(),
