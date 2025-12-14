@@ -11,78 +11,118 @@ class ReportDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ReportController>();
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(report.title),
+        title: Text(report.title, style: const TextStyle(color: Colors.white)),
         elevation: 0,
-        actions: [ // added edit button
+        backgroundColor: Colors.indigo.shade600,
+        actions: [
           IconButton(
-            icon: const Icon(Icons.edit),
+            icon: const Icon(Icons.edit, color: Colors.white),
             onPressed: () async {
               final updated = await Navigator.push<bool>(
                 context,
-                MaterialPageRoute(builder: (_) => EditReportPage(report: report)),
+                MaterialPageRoute(
+                  builder: (_) => EditReportPage(report: report),
+                ),
               );
               if (updated == true) {
                 controller.fetchReports();
-                // optional: pop back to previous list if needed
               }
             },
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.network(
-              report.imageUrl,
-              fit: BoxFit.cover,
-              height: 250,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 250,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.broken_image),
-                );
-              },
+      body: Container(
+        color: Colors.grey.shade50,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        report.imageUrl,
+                        fit: BoxFit.cover,
+                        height: 250,
+                        width: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 250,
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.broken_image),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      report.title,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1A237E),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      report.description,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        height: 1.5,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        "Tanggal: ${report.createdAt}",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () => _showDeleteDialog(context, controller),
+                        icon: const Icon(Icons.delete, color: Colors.white),
+                        label: const Text(
+                          'Hapus Laporan',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 20),
-          Text(
-            report.title,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            report.description,
-            style: const TextStyle(fontSize: 16, height: 1.5),
-          ),
-          const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              "Tanggal: ${report.createdAt}",
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-          ),
-          const SizedBox(height: 30),
-          ElevatedButton.icon(
-            onPressed: () => _showDeleteDialog(context, controller),
-            icon: const Icon(Icons.delete),
-            label: const Text("Hapus Laporan"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
