@@ -140,9 +140,6 @@ class _LoginPageState extends State<LoginPage> {
                                             MaterialPageRoute(builder: (_) => const HomePage()),
                                           );
                                         }
-                                      } on AuthException catch (e) {
-                                        // Supabase error
-                                        _showError('Email atau password salah');
                                       } catch (e) {
                                         final msg = e.toString().toLowerCase();
                                         if (msg.contains('invalid') ||

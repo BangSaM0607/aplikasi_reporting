@@ -1,5 +1,17 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+class ReportModel {
+
+
+
+
+
+
+} // ...existing code...
+
+String? status; // Add this line to define the status property
+
+// ...existing code...
 class AuthController {
   final _client = Supabase.instance.client;
 

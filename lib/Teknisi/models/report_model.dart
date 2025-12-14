@@ -4,6 +4,7 @@ class ReportModel {
   final String description;
   final String imageUrl;
   final String createdAt;
+  String? status; // Add this line to define the status property
 
   ReportModel({
     required this.id,
