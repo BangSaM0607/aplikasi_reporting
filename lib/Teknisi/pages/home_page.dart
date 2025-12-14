@@ -36,15 +36,18 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Laporan Saya"),
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20),
         elevation: 0,
         backgroundColor: Colors.indigo.shade600,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: controller.fetchReports,
+            style: IconButton.styleFrom(foregroundColor: Colors.white),
           ),
           IconButton(
             icon: const Icon(Icons.logout),
+            style: IconButton.styleFrom(foregroundColor: Colors.white),
             onPressed: () async {
               try {
                 await Supabase.instance.client.auth.signOut();
