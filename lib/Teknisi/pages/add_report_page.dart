@@ -50,18 +50,36 @@ class _AddReportPageState extends State<AddReportPage> {
       return;
     }
 
-    await controller.addReport(
-      title.text.trim(),
-      desc.text.trim(),
-      imageBytes!,
-    );
-    if (!mounted) return;
-    Get.snackbar(
-      'Sukses',
-      'Laporan tersimpan',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-    Navigator.pop(context);
+    try {
+      await controller.addReport(
+        title.text.trim(),
+        desc.text.trim(),
+        imageBytes!,
+      );
+      
+      if (!mounted) return;
+      
+      Get.snackbar(
+        'Sukses',
+        'Laporan tersimpan',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      
+      // Tunggu snackbar selesai, baru navigasi
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      // Kembali ke home page menggunakan Navigator
+      Navigator.of(context).pop();
+      // Atau jika ingin hapus semua page di stack:
+      // Navigator.of(context).popUntil((route) => route.isFirst);
+    } catch (e) {
+      if (!mounted) return;
+      Get.snackbar(
+        'Error',
+        'Gagal menyimpan laporan: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
 
   @override

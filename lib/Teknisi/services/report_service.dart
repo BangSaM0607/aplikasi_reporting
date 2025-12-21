@@ -16,10 +16,17 @@ class ReportService {
         bytes,
       );
 
-      return supabase.storage.from(bucket).getPublicUrl(fileName);
+      // getPublicUrl() adalah synchronous, tapi pastikan return value benar
+      final imageUrl = supabase.storage.from(bucket).getPublicUrl(fileName);
+      
+      if (imageUrl.isEmpty) {
+        throw Exception('Gagal mendapatkan URL gambar');
+      }
+      
+      return imageUrl;
     } catch (e) {
       print('Error uploading image: $e');
-      throw Exception('Gagal upload gambar');
+      throw Exception('Gagal upload gambar: ${e.toString()}');
     }
   }
 
@@ -37,7 +44,7 @@ class ReportService {
       });
     } catch (e) {
       print('Error adding report: $e');
-      throw Exception('Gagal menambah laporan');
+      throw Exception('Gagal menambah laporan: ${e.toString()}');
     }
   }
 
@@ -48,12 +55,16 @@ class ReportService {
           .select()
           .order('created_at', ascending: false);
 
+      if (response.isEmpty) {
+        return [];
+      }
+
       return (response as List)
           .map((data) => ReportModel.fromJson(data))
           .toList();
     } catch (e) {
       print('Error fetching reports: $e');
-      throw Exception('Gagal mengambil laporan');
+      throw Exception('Gagal mengambil laporan: ${e.toString()}');
     }
   }
 
@@ -62,7 +73,7 @@ class ReportService {
       await supabase.from(table).delete().eq('id', id);
     } catch (e) {
       print('Error deleting report: $e');
-      throw Exception('Gagal menghapus laporan');
+      throw Exception('Gagal menghapus laporan: ${e.toString()}');
     }
   }
 }

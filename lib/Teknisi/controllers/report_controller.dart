@@ -22,19 +22,27 @@ class ReportController extends GetxController {
   ) async {
     try {
       loading.value = true;
-      final imageUrl = await service.uploadImageBytes(imageBytes);
+      
+      // Tambah timeout untuk mencegah hang
+      final imageUrl = await service.uploadImageBytes(imageBytes)
+          .timeout(const Duration(seconds: 30), onTimeout: () {
+        throw Exception('Upload gambar timeout');
+      });
 
       await service.addReport(
         title: title,
         description: description,
         imageUrl: imageUrl,
-      );
+      ).timeout(const Duration(seconds: 15), onTimeout: () {
+        throw Exception('Tambah laporan timeout');
+      });
 
-      await fetchReports();
-      Get.snackbar('Sukses', 'Laporan berhasil ditambahkan');
+      // Refresh list
+      final fetchedReports = await service.getReports();
+      reports.value = fetchedReports;
     } catch (e) {
       print('Error adding report: $e');
-      Get.snackbar('Error', 'Gagal menambahkan laporan');
+      rethrow;
     } finally {
       loading.value = false;
     }
@@ -43,7 +51,10 @@ class ReportController extends GetxController {
   Future<void> fetchReports() async {
     try {
       loading.value = true;
-      final fetchedReports = await service.getReports();
+      final fetchedReports = await service.getReports()
+          .timeout(const Duration(seconds: 15), onTimeout: () {
+        throw Exception('Memuat laporan timeout');
+      });
       reports.value = fetchedReports;
     } catch (e) {
       print('Error fetching reports: $e');
@@ -56,7 +67,10 @@ class ReportController extends GetxController {
   Future<void> deleteReport(String id) async {
     try {
       loading.value = true;
-      await service.deleteReport(id);
+      await service.deleteReport(id)
+          .timeout(const Duration(seconds: 15), onTimeout: () {
+        throw Exception('Hapus laporan timeout');
+      });
       reports.removeWhere((report) => report.id == id);
       Get.snackbar('Sukses', 'Laporan berhasil dihapus');
     } catch (e) {
