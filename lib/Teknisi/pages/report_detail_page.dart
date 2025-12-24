@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/report_model.dart';
 import '../controllers/report_controller.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'edit_report_page.dart'; // added import
 
 class ReportDetailPage extends StatelessWidget {
@@ -17,20 +18,21 @@ class ReportDetailPage extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.indigo.shade600,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.edit, color: Colors.white),
-            onPressed: () async {
-              final updated = await Navigator.push<bool>(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => EditReportPage(report: report),
-                ),
-              );
-              if (updated == true) {
-                controller.fetchReports();
-              }
-            },
-          ),
+          if (report.userId == Supabase.instance.client.auth.currentUser?.id)
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.white),
+              onPressed: () async {
+                final updated = await Navigator.push<bool>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditReportPage(report: report),
+                  ),
+                );
+                if (updated == true) {
+                  controller.fetchReports();
+                }
+              },
+            ),
         ],
       ),
       body: Container(
@@ -98,25 +100,28 @@ class ReportDetailPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 18),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () => _showDeleteDialog(context, controller),
-                        icon: const Icon(Icons.delete, color: Colors.white),
-                        label: const Text(
-                          'Hapus Laporan',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                    if (report.userId ==
+                        Supabase.instance.client.auth.currentUser?.id)
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () =>
+                              _showDeleteDialog(context, controller),
+                          icon: const Icon(Icons.delete, color: Colors.white),
+                          label: const Text(
+                            'Hapus Laporan',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),

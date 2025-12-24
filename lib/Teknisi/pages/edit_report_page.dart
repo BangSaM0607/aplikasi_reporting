@@ -40,7 +40,10 @@ class _EditReportPageState extends State<EditReportPage> {
   }
 
   Future<void> _pickImage() async {
-    final XFile? picked = await _picker.pickImage(source: ImageSource.gallery, maxWidth: 1600);
+    final XFile? picked = await _picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1600,
+    );
     if (picked == null) return;
     final bytes = await picked.readAsBytes();
     setState(() {
@@ -57,6 +60,11 @@ class _EditReportPageState extends State<EditReportPage> {
         imageUrl = await _reportService.uploadImageBytes(_newImageBytes!);
       }
 
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      if (userId == null) {
+        throw Exception('User not authenticated');
+      }
+
       await Supabase.instance.client
           .from('reports')
           .update({
@@ -64,7 +72,8 @@ class _EditReportPageState extends State<EditReportPage> {
             'description': _descCtrl.text.trim(),
             'image_url': imageUrl,
           })
-          .eq('id', widget.report.id);
+          .eq('id', widget.report.id)
+          .eq('user_id', userId);
 
       if (mounted) {
         // arahkan ke HomePage setelah berhasil menyimpan dan kosongkan stack
@@ -76,9 +85,9 @@ class _EditReportPageState extends State<EditReportPage> {
     } catch (e) {
       if (mounted) {
         setState(() => _loading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menyimpan: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Gagal menyimpan: $e')));
       }
     }
   }
@@ -86,13 +95,29 @@ class _EditReportPageState extends State<EditReportPage> {
   @override
   Widget build(BuildContext context) {
     final previewWidget = _newImageBytes != null
-        ? Image.memory(_newImageBytes!, height: 180, fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(height: 180, color: Colors.grey[300], child: const Icon(Icons.broken_image)))
-        : Image.network(widget.report.imageUrl, height: 180, fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(height: 180, color: Colors.grey[300], child: const Icon(Icons.broken_image)));
+        ? Image.memory(
+            _newImageBytes!,
+            height: 180,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(
+              height: 180,
+              color: Colors.grey[300],
+              child: const Icon(Icons.broken_image),
+            ),
+          )
+        : Image.network(
+            widget.report.imageUrl,
+            height: 180,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(
+              height: 180,
+              color: Colors.grey[300],
+              child: const Icon(Icons.broken_image),
+            ),
+          );
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit Laporan'),
-      ),
+      appBar: AppBar(title: const Text('Edit Laporan')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -102,14 +127,16 @@ class _EditReportPageState extends State<EditReportPage> {
               TextFormField(
                 controller: _titleCtrl,
                 decoration: const InputDecoration(labelText: 'Judul'),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Judul wajib' : null,
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Judul wajib' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _descCtrl,
                 decoration: const InputDecoration(labelText: 'Deskripsi'),
                 maxLines: 5,
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Deskripsi wajib' : null,
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Deskripsi wajib' : null,
               ),
               const SizedBox(height: 12),
               TextButton.icon(
@@ -127,7 +154,14 @@ class _EditReportPageState extends State<EditReportPage> {
                 onPressed: _loading ? null : _save,
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                 child: _loading
-                    ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
                     : const Text('Simpan Perubahan'),
               ),
             ],
