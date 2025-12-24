@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../controllers/report_controller.dart';
 import 'add_report_page.dart';
 import 'report_detail_page.dart';
+import 'profile_page.dart';
 import '../../login_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -46,20 +47,16 @@ class HomePage extends StatelessWidget {
             style: IconButton.styleFrom(foregroundColor: Colors.white),
           ),
           IconButton(
-            icon: const Icon(Icons.logout),
-            style: IconButton.styleFrom(foregroundColor: Colors.white),
-            onPressed: () async {
-              try {
-                await Supabase.instance.client.auth.signOut();
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const LoginPage()),
-                  (route) => false,
-                );
-              } catch (e) {
-                print('Error logout: $e');
-              }
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfilePage()),
+              );
             },
+            style: IconButton.styleFrom(foregroundColor: Colors.white),
           ),
+          // Logout button removed from dashboard; logout remains in ProfilePage
         ],
       ),
       body: Container(
