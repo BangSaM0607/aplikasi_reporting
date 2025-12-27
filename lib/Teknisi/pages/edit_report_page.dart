@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/report_model.dart';
 import '../services/report_service.dart';
-import 'home_page.dart'; // added import
+import 'dashboard_teknisi.dart'; // added import
 
 class EditReportPage extends StatefulWidget {
   final ReportModel report;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Teknisi/controllers/auth_controller.dart';
-import 'Teknisi/pages/home_page.dart';
-import 'Teknisi/pages/register_page.dart';
+import 'Teknisi/pages/dashboard_teknisi.dart';
+import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

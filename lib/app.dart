@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
-import 'Teknisi/pages/home_page.dart';
+import 'Teknisi/pages/dashboard_teknisi.dart';
 import 'supabase_config.dart';
 
 class MyApp extends StatelessWidget {
