@@ -11,18 +11,15 @@ class ReportService {
     try {
       final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-      await supabase.storage.from(bucket).uploadBinary(
-        fileName,
-        bytes,
-      );
+      await supabase.storage.from(bucket).uploadBinary(fileName, bytes);
 
       // getPublicUrl() adalah synchronous, tapi pastikan return value benar
       final imageUrl = supabase.storage.from(bucket).getPublicUrl(fileName);
-      
+
       if (imageUrl.isEmpty) {
         throw Exception('Gagal mendapatkan URL gambar');
       }
-      
+
       return imageUrl;
     } catch (e) {
       print('Error uploading image: $e');
@@ -36,11 +33,15 @@ class ReportService {
     required String imageUrl,
   }) async {
     try {
+      final user = supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
       await supabase.from(table).insert({
         'title': title,
         'description': description,
         'image_url': imageUrl,
         'created_at': DateTime.now().toIso8601String(),
+        'user_id': user.id,
       });
     } catch (e) {
       print('Error adding report: $e');
@@ -50,9 +51,13 @@ class ReportService {
 
   Future<List<ReportModel>> getReports() async {
     try {
+      final user = supabase.auth.currentUser;
+      if (user == null) return [];
+
       final response = await supabase
           .from(table)
           .select()
+          .eq('user_id', user.id)
           .order('created_at', ascending: false);
 
       if (response.isEmpty) {
@@ -70,7 +75,10 @@ class ReportService {
 
   Future<void> deleteReport(String id) async {
     try {
-      await supabase.from(table).delete().eq('id', id);
+      final user = supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      await supabase.from(table).delete().eq('id', id).eq('user_id', user.id);
     } catch (e) {
       print('Error deleting report: $e');
       throw Exception('Gagal menghapus laporan: ${e.toString()}');
